@@ -13,7 +13,7 @@ function serverRouter(app){
     })
 
     router.post('/productos', async (req, res)=>{
-        let product  = req.body
+        let product = req.body
         await productsFromFile.save(product)
         res.send('Agregado con exito!')
     })
@@ -25,14 +25,12 @@ function serverRouter(app){
         filteredUserById.length == 0 ? res.send({'error': 'Producto no encontrado'}) : res.send(filteredUserById)
     })
 
-    /*router.put('/productos/:id', async (req, res)=>{
+    router.put('/productos/:id', async (req, res)=>{
         let { id } = req.params
-        let productUpdated = req.body
-        const dataAll = await productsFromFile.getAll()
-        const updateUserById = dataAll.filter(el => el.id == id) 
-        updateUserById =  await productsFromFile.updateById(productUpdated)
-        res.send('Actualizado con exito')
-    })*/
+        let  productUpdated  = req.body
+        await productsFromFile.updateById(productUpdated, id)
+        res.send('Actualizado con exito!')
+    })
 
     router.delete('/productos/:id', async (req, res)=>{
         let { id } = req.params

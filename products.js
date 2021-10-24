@@ -7,7 +7,7 @@ class Contenedor {
         this.fileName = fileName
     }   
 
-    async save(obj){
+    async save(product){
         try{
             const exists = fs.existsSync(`./productos.json`)
             if(exists){
@@ -16,24 +16,25 @@ class Contenedor {
                  const idMap = parsedResponse.map(el => parseInt(el.id))
                  let filterMaxId = Math.max(...idMap)
                  const newId = filterMaxId+1 
-                 obj.id = newId
-                 parsedResponse.push(obj)
+                 product.id = newId
+                 parsedResponse.push(product)
                  let fileStringify = JSON.stringify(parsedResponse)
                  try{
                     await fs.promises.writeFile(this.fileName, fileStringify)
                  }catch(e){
                      console.log('error', e)
                  }
-                 return newId
+                 return product
             }else{
-                obj.id = 1
-                products.push(obj)
+                product.id = 1
+                products.push(product)
                 let fileStringify = JSON.stringify(products)
                 try{
                     await fs.promises.writeFile(this.fileName, fileStringify)
                 }catch(e){
                     console.log('error', e)
                 }
+                return product
             }    
         }catch(e){
             console.log('error', e)
@@ -63,10 +64,15 @@ class Contenedor {
         return deleteElement
     }
 
-    async updateById(productUpdated){
+    async updateById(productUpdated, id){
         const fileContent = await fs.promises.readFile(`./productos.json`, 'utf-8')
         const parsedContent = JSON.parse(fileContent)
-        parsedContent.push(productUpdated)
+        parsedContent.forEach(el => {
+            if(el.id == id){
+                el.title = productUpdated.title
+                el.price = productUpdated.price
+            }
+        })
         let fileStringify = JSON.stringify(parsedContent)
         try{
             await fs.promises.writeFile(this.fileName, fileStringify)
